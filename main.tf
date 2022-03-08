@@ -1,24 +1,22 @@
 locals {
-  enabled           = module.this.enabled
+  enabled           = true
   flow_logs_enabled = local.enabled && var.flow_logs_enabled
   listeners         = local.enabled ? { for index, listener in var.listeners : format("listener-%v", index) => listener } : {}
 }
 
 resource "aws_globalaccelerator_accelerator" "default" {
   count = local.enabled ? 1 : 0
-
-  name            = module.this.id
+  name            = globalaccelerator
   ip_address_type = var.ip_address_type
   enabled         = true
   dynamic "attributes" {
     for_each = local.flow_logs_enabled ? toset([true]) : toset([])
     content {
-      flow_logs_enabled   = true
-      flow_logs_s3_bucket = var.flow_logs_s3_bucket
-      flow_logs_s3_prefix = var.flow_logs_s3_prefix
+      flow_logs_enabled   = false
+      # flow_logs_s3_bucket = var.flow_logs_s3_bucket
+      # flow_logs_s3_prefix = var.flow_logs_s3_prefix
     }
   }
-  tags = module.this.tags
 }
 
 resource "aws_globalaccelerator_listener" "default" {

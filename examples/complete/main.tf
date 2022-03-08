@@ -2,44 +2,22 @@ provider "aws" {
   region = var.region
 }
 
-module "vpc" {
-  source  = "cloudposse/vpc/aws"
-  version = "0.18.2"
+# module "s3_bucket" {
+#   source  = "../.." #put the s3 source from different module
+#   force_destroy = true
+# }
 
-  context = module.this.context
-
-  cidr_block = var.vpc_cidr_block
-}
-
-module "subnets" {
-  source  = "cloudposse/dynamic-subnets/aws"
-  version = "0.34.0"
-
-  context = module.this.context
-
-  availability_zones = var.availability_zones
-  vpc_id             = module.vpc.vpc_id
-  igw_id             = module.vpc.igw_id
-  cidr_block         = module.vpc.vpc_cidr_block
-}
-
-module "s3_bucket" {
-  source  = "drivepics-1991/dynamic"
-  version = "0.38.0"
-  context = module.this.context
+module "alb" {
+  source  = "../.." #put the s3 source from different module
   force_destroy = true
 }
 
 module "global_accelerator" {
   source = "../.."
-
-  context = module.this.context
-
   ip_address_type     = "IPV4"
-  flow_logs_enabled   = true
-  flow_logs_s3_prefix = "logs/"
-  flow_logs_s3_bucket = module.s3_bucket.bucket_id
-
+  # flow_logs_enabled   = true
+  # flow_logs_s3_prefix = "logs/"
+  # flow_logs_s3_bucket = module.s3_bucket.bucket_id
   listeners = [
     {
       client_affinity = "NONE"
@@ -56,18 +34,13 @@ module "global_accelerator" {
 
 module "endpoint_group" {
   source = "../../modules/endpoint-group"
-
-  context = module.this.context
-
   listener_arn = module.global_accelerator.listener_ids[0]
   config = {
     endpoint_region = var.region
     endpoint_configuration = [
       {
-        endpoint_lb_name = module.ecs.alb_name
+        endpoint_lb_name = module.alb.alb_name
       }
     ]
   }
-
-  depends_on = [module.ecs]
 }

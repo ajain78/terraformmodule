@@ -1,5 +1,5 @@
 locals {
-  enabled                 = module.this.enabled
+  enabled                 = true
   endpoint_configurations = try(length(var.config.endpoint_configuration), 0) > 0 ? var.config.endpoint_configuration : []
   lb_names                = compact([for configuration in local.endpoint_configurations : try(configuration.endpoint_lb_name, null)])
 }
