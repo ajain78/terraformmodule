@@ -31,6 +31,11 @@ variable "flow_logs_s3_prefix" {
   type        = string
   default     = null
 }
+variable "ganame" {
+  description = "global name"
+  type        = string
+  default = "globalacc"
+}
 
 variable "ip_address_type" {
   description = "The address type to use for the Global Accelerator. At this moment, [only IPV4 is supported](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/globalaccelerator_accelerator#ip_address_type)."

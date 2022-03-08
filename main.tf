@@ -6,7 +6,7 @@ locals {
 
 resource "aws_globalaccelerator_accelerator" "default" {
   count = local.enabled ? 1 : 0
-  name            = globalaccelerator
+  name= var.ganame
   ip_address_type = var.ip_address_type
   enabled         = true
   dynamic "attributes" {
