@@ -5,7 +5,7 @@ output "name" {
 
 output "endpoint_group_ids" {
   description = "Global Accelerator Endpoint Group IDs."
-  value       = module.endpoint_group.id
+  value       = [module.endpoint_group.id, module.endpoint_group_failover.id]
 }
 
 output "listener_ids" {

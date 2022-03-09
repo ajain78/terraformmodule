@@ -34,7 +34,7 @@ variable "flow_logs_s3_prefix" {
 variable "ganame" {
   description = "global name"
   type        = string
-  default = "globalacc"
+  default = "global-accelerator"
 }
 
 variable "ip_address_type" {
